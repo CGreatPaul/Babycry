@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>制定你的学习计划</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: #f7f8fa;
+            color: #222;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 32px 0 64px 0;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.4rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 32px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+            padding: 28px 32px 24px 32px;
+            margin-bottom: 28px;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+        .form-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+        .form-col {
+            flex: 1;
+        }
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #333;
+        }
+        .form-control, select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            font-size: 1rem;
+            background: #fafbfc;
+            margin-bottom: 0;
+        }
+        .form-control:focus, select:focus {
+            outline: none;
+            border-color: #26d0ce;
+            background: #fff;
+        }
+        .plan-btn {
+            background: linear-gradient(90deg,#1a2980,#26d0ce);
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            font-size: 1.15rem;
+            font-weight: bold;
+            padding: 14px 0;
+            width: 100%;
+            margin-top: 18px;
+            box-shadow: 0 2px 12px rgba(38,208,206,0.08);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .plan-btn:hover {
+            background: linear-gradient(90deg,#26d0ce,#1a2980);
+        }
+        .tip {
+            color: #888;
+            font-size: 0.95rem;
+            margin-top: 10px;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 10px 0 40px 0; }
+            .card { padding: 16px 6vw 16px 6vw; }
+            .form-row { flex-direction: column; gap: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>制定你的学习计划</h1>
+        <div class="subtitle">输入你的学习参数，AI将为你生成高效的学习时间表</div>
+        <form id="plan-form">
+            <div class="card">
+                <div class="card-title">基础设置</div>
+                <div class="form-row">
+                    <div class="form-col">
+                        <label class="form-label">开始学习时间</label>
+                        <input type="time" class="form-control" id="start-time" value="09:00" required>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label">学习模块时长(分钟)</label>
+                        <input type="number" class="form-control" id="study-duration" value="45" min="20" max="90" required>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label">休息时长(分钟)</label>
+                        <input type="number" class="form-control" id="break-duration" value="10" min="5" max="30" required>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">用餐时间设置</div>
+                <div class="form-row">
+                    <div class="form-col">
+                        <label class="form-label">午餐开始时间</label>
+                        <input type="time" class="form-control" id="lunch-time" value="12:20" required>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label">午餐时长(分钟)</label>
+                        <input type="number" class="form-control" id="lunch-duration" value="55" min="30" max="90" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-col">
+                        <label class="form-label">晚餐开始时间</label>
+                        <input type="time" class="form-control" id="dinner-time" value="17:25" required>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label">晚餐时长(分钟)</label>
+                        <input type="number" class="form-control" id="dinner-duration" value="45" min="30" max="90" required>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">复盘时间设置</div>
+                <div class="form-row">
+                    <div class="form-col">
+                        <label class="form-label">复盘开始时间</label>
+                        <input type="time" class="form-control" id="review-time" value="21:50" required>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label">复盘时长(分钟)</label>
+                        <input type="number" class="form-control" id="review-duration" value="30" min="15" max="60" required>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">科目学习模块数量</div>
+                <div class="form-row">
+                    <div class="form-col">
+                        <label class="form-label">数学</label>
+                        <input type="number" class="form-control" id="math-count" value="2" min="1" max="10" required>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label">英语</label>
+                        <input type="number" class="form-control" id="english-count" value="2" min="1" max="10" required>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label">专业课</label>
+                        <input type="number" class="form-control" id="major-count" value="2" min="1" max="10" required>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label">政治</label>
+                        <input type="number" class="form-control" id="politics-count" value="1" min="1" max="10" required>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="plan-btn"><i class="fas fa-magic"></i> 生成学习时间表</button>
+            <div class="tip">提示：可根据个人习惯调整参数，生成最适合你的学习时间表</div>
+        </form>
+    </div>
+    <script>
+    document.getElementById('plan-form').onsubmit = function(e) {
+        e.preventDefault();
+        const params = {
+            startTime: document.getElementById('start-time').value,
+            studyDuration: parseInt(document.getElementById('study-duration').value),
+            breakDuration: parseInt(document.getElementById('break-duration').value),
+            lunchTime: document.getElementById('lunch-time').value,
+            lunchDuration: parseInt(document.getElementById('lunch-duration').value),
+            dinnerTime: document.getElementById('dinner-time').value,
+            dinnerDuration: parseInt(document.getElementById('dinner-duration').value),
+            reviewTime: document.getElementById('review-time').value,
+            reviewDuration: parseInt(document.getElementById('review-duration').value),
+            mathCount: parseInt(document.getElementById('math-count').value),
+            englishCount: parseInt(document.getElementById('english-count').value),
+            majorCount: parseInt(document.getElementById('major-count').value),
+            politicsCount: parseInt(document.getElementById('politics-count').value)
+        };
+        localStorage.setItem('custom_schedule_params', JSON.stringify(params));
+        window.location.href = '3deep加按钮 - cursor.html';
+    };
+    </script>
+</body>
+</html> 
