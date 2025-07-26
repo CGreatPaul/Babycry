@@ -3,101 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Babycry - 智能学习计划生成器</title>
+    <title>制定你的学习计划</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
+            background: #f7f8fa;
+            color: #222;
             font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: white;
         }
         .container {
-            text-align: center;
-            max-width: 600px;
-            padding: 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 32px 0 64px 0;
         }
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-        .btn {
-            display: inline-block;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            padding: 15px 30px;
-            text-decoration: none;
-            border-radius: 25px;
-            font-size: 1.1rem;
+            text-align: center;
+            font-size: 2.4rem;
             font-weight: bold;
-            border: 2px solid rgba(255,255,255,0.3);
-            transition: all 0.3s ease;
-            margin: 10px;
+            margin-bottom: 10px;
         }
-        .btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 32px;
         }
-        .features {
-            margin-top: 40px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+            padding: 28px 32px 24px 32px;
+            margin-bottom: 28px;
         }
-        .feature {
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 18px;
         }
-        .feature h3 {
-            margin-top: 0;
-            color: #ffd700;
+        .form-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+        .form-col {
+            flex: 1;
+        }
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #333;
+        }
+        .form-control, select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            font-size: 1rem;
+            background: #fafbfc;
+            margin-bottom: 0;
+        }
+        .form-control:focus, select:focus {
+            outline: none;
+            border-color: #26d0ce;
+            background: #fff;
+        }
+        .plan-btn {
+            background: linear-gradient(90deg,#1a2980,#26d0ce);
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            font-size: 1.15rem;
+            font-weight: bold;
+            padding: 14px 0;
+            width: 100%;
+            margin-top: 18px;
+            box-shadow: 0 2px 12px rgba(38,208,206,0.08);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .plan-btn:hover {
+            background: linear-gradient(90deg,#26d0ce,#1a2980);
+        }
+        .tip {
+            color: #888;
+            font-size: 0.95rem;
+            margin-top: 10px;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 10px 0 40px 0; }
+            .card { padding: 16px 6vw 16px 6vw; }
+            .form-row { flex-direction: column; gap: 0; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎓 Babycry</h1>
-        <p>智能学习计划生成器 - 让学习更高效，让时间更有价值</p>
-        
-        <div>
-            <a href="setup.html" class="btn">🚀 开始制定学习计划</a>
-            <a href="schedule.html" class="btn">📅 查看时间表</a>
-        </div>
-        
-        <div class="features">
-            <div class="feature">
-                <h3>📚 多科目管理</h3>
-                <p>支持添加多个学习科目，灵活配置学习模块</p>
+        <h1>制定你的学习计划</h1>
+        <div class="subtitle">输入你的学习参数，AI将为你生成高效的学习时间表</div>
+        <form id="plan-form">
+            <div class="card" id="subjects-card">
+                <div class="card-title">科目学习模块数量</div>
+                <div id="subjects-container"></div>
+                <button type="button" id="add-subject-btn" class="plan-btn" style="margin-top:10px;margin-bottom:0;background:linear-gradient(90deg,#26d0ce,#1a2980);"><i class="fas fa-plus"></i> 添加科目</button>
             </div>
-            <div class="feature">
-                <h3>⏰ 智能规划</h3>
-                <p>根据个人习惯自动生成最优学习时间表</p>
+            <div class="card">
+                <div class="card-title">基础设置</div>
+                <div class="form-row">
+                    <div class="form-col">
+                        <label class="form-label">开始学习时间</label>
+                        <input type="time" class="form-control" id="start-time" value="09:00" required>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label">学习模块时长(分钟)</label>
+                        <input type="number" class="form-control" id="study-duration" value="45" min="20" max="90" required>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label">休息时长(分钟)</label>
+                        <input type="number" class="form-control" id="break-duration" value="10" min="5" max="30" required>
+                    </div>
+                </div>
             </div>
-            <div class="feature">
-                <h3>💾 数据保存</h3>
-                <p>自动保存设置，下次访问无需重新配置</p>
+            <div class="card">
+                <div class="card-title">用餐时间设置</div>
+                <div class="form-row">
+                    <div class="form-col">
+                        <label class="form-label">午餐开始时间</label>
+                        <input type="time" class="form-control" id="lunch-time" value="12:20" required>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label">午餐时长(分钟)</label>
+                        <input type="number" class="form-control" id="lunch-duration" value="55" min="30" max="90" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-col">
+                        <label class="form-label">晚餐开始时间</label>
+                        <input type="time" class="form-control" id="dinner-time" value="17:25" required>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label">晚餐时长(分钟)</label>
+                        <input type="number" class="form-control" id="dinner-duration" value="45" min="30" max="90" required>
+                    </div>
+                </div>
             </div>
-        </div>
+            <div class="card">
+                <div class="card-title">复盘时间设置</div>
+                <div class="form-row">
+                    <div class="form-col">
+                        <label class="form-label">复盘开始时间</label>
+                        <input type="time" class="form-control" id="review-time" value="21:50" required>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label">复盘时长(分钟)</label>
+                        <input type="number" class="form-control" id="review-duration" value="30" min="15" max="60" required>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="plan-btn"><i class="fas fa-magic"></i> 生成学习时间表</button>
+            <div class="tip">提示：可根据个人习惯调整参数，生成最适合你的学习时间表</div>
+        </form>
     </div>
-    
     <script>
-        // 自动重定向到设置页面
-        setTimeout(() => {
-            window.location.href = 'setup.html';
-        }, 2000);
+    // 动态科目管理
+    const subjectsContainer = document.getElementById('subjects-container');
+    const addSubjectBtn = document.getElementById('add-subject-btn');
+    let subjectId = 0;
+    function createSubjectRow(name = '', count = 1) {
+        const row = document.createElement('div');
+        row.className = 'form-row';
+        row.style.alignItems = 'center';
+        row.dataset.subjectId = subjectId++;
+        row.innerHTML = `
+            <div class="form-col" style="min-width:120px;max-width:220px;flex:2;">
+                <input type="text" class="form-control subject-name" placeholder="科目名称" value="${name}" required maxlength="10">
+            </div>
+            <div class="form-col" style="max-width:120px;flex:1;">
+                <input type="number" class="form-control subject-count" value="${count}" min="1" max="10" required>
+            </div>
+            <div style="display:flex;align-items:center;">
+                <button type="button" class="plan-btn remove-subject-btn" style="padding:8px 16px;font-size:1rem;background:#eee;color:#1a2980;margin-left:8px;"><i class="fas fa-trash"></i></button>
+            </div>
+        `;
+        row.querySelector('.remove-subject-btn').onclick = function() {
+            row.remove();
+            updateAddBtnState();
+        };
+        return row;
+    }
+    function updateAddBtnState() {
+        const count = subjectsContainer.querySelectorAll('.form-row').length;
+        addSubjectBtn.disabled = count >= 8;
+    }
+    addSubjectBtn.onclick = function() {
+        if (subjectsContainer.querySelectorAll('.form-row').length < 8) {
+            subjectsContainer.appendChild(createSubjectRow());
+            updateAddBtnState();
+        }
+    };
+    // 初始默认科目
+    ['数学','英语','专业课','政治'].forEach((name, i) => {
+        subjectsContainer.appendChild(createSubjectRow(name, i===3?1:2));
+    });
+    updateAddBtnState();
+    // 表单提交逻辑
+    const planForm = document.getElementById('plan-form');
+    planForm.onsubmit = function(e) {
+        e.preventDefault();
+        const subjects = Array.from(subjectsContainer.querySelectorAll('.form-row')).map(row => {
+            return {
+                name: row.querySelector('.subject-name').value.trim(),
+                count: parseInt(row.querySelector('.subject-count').value)
+            };
+        }).filter(s => s.name);
+        if (subjects.length === 0) {
+            alert('请至少添加一个科目');
+            return;
+        }
+        const params = {
+            startTime: document.getElementById('start-time').value,
+            studyDuration: parseInt(document.getElementById('study-duration').value),
+            breakDuration: parseInt(document.getElementById('break-duration').value),
+            lunchTime: document.getElementById('lunch-time').value,
+            lunchDuration: parseInt(document.getElementById('lunch-duration').value),
+            dinnerTime: document.getElementById('dinner-time').value,
+            dinnerDuration: parseInt(document.getElementById('dinner-duration').value),
+            reviewTime: document.getElementById('review-time').value,
+            reviewDuration: parseInt(document.getElementById('review-duration').value),
+            subjects: subjects
+        };
+        localStorage.setItem('custom_schedule_params', JSON.stringify(params));
+        window.location.href = 'schedule.html';
+    };
+    window.addEventListener('DOMContentLoaded', function() {
+        // 自动回填localStorage参数
+        const saved = localStorage.getItem('custom_schedule_params');
+        if (saved) {
+            try {
+                const params = JSON.parse(saved);
+                // 基础设置
+                document.getElementById('start-time').value = params.startTime || "09:00";
+                document.getElementById('study-duration').value = params.studyDuration || 45;
+                document.getElementById('break-duration').value = params.breakDuration || 10;
+                document.getElementById('lunch-time').value = params.lunchTime || "12:20";
+                document.getElementById('lunch-duration').value = params.lunchDuration || 55;
+                document.getElementById('dinner-time').value = params.dinnerTime || "17:25";
+                document.getElementById('dinner-duration').value = params.dinnerDuration || 45;
+                document.getElementById('review-time').value = params.reviewTime || "21:50";
+                document.getElementById('review-duration').value = params.reviewDuration || 30;
+                // 动态科目
+                subjectsContainer.innerHTML = '';
+                if (Array.isArray(params.subjects)) {
+                    params.subjects.forEach(s => {
+                        subjectsContainer.appendChild(createSubjectRow(s.name, s.count));
+                    });
+                }
+                updateAddBtnState();
+            } catch (e) {
+                // ignore
+            }
+        }
+    });
     </script>
 </body>
 </html> 
