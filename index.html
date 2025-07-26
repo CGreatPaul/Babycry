@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Babycry - 智能学习计划生成器</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 40px 20px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .features {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .feature {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .feature h3 {
+            margin-top: 0;
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 Babycry</h1>
+        <p>智能学习计划生成器 - 让学习更高效，让时间更有价值</p>
+        
+        <div>
+            <a href="setup.html" class="btn">🚀 开始制定学习计划</a>
+            <a href="schedule.html" class="btn">📅 查看时间表</a>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>📚 多科目管理</h3>
+                <p>支持添加多个学习科目，灵活配置学习模块</p>
+            </div>
+            <div class="feature">
+                <h3>⏰ 智能规划</h3>
+                <p>根据个人习惯自动生成最优学习时间表</p>
+            </div>
+            <div class="feature">
+                <h3>💾 数据保存</h3>
+                <p>自动保存设置，下次访问无需重新配置</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 自动重定向到设置页面（可选）
+        // setTimeout(() => {
+        //     window.location.href = 'setup.html';
+        // }, 3000);
+    </script>
+</body>
+</html> 
