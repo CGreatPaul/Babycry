@@ -918,12 +918,10 @@
             tipElement.style.color = '#4CAF50';
             tipElement.style.fontWeight = 'bold';
             
-            // 延迟跳转，让用户看到成功状态
-            setTimeout(() => {
-                window.location.href = 'schedule.html';
-            }, 1500); // 1.5秒后跳转
+            // 立即跳转
+            window.location.href = 'schedule.html';
             
-        }, 800); // 0.8秒后显示成功状态
+        }, 500); // 0.5秒后显示成功状态并跳转
         
         // 注意：以下函数仅用于内部逻辑，不显示预览
         // 时间表生成逻辑（隐藏）
