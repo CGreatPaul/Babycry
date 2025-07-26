@@ -105,6 +105,11 @@
         <h1>制定你的学习计划</h1>
         <div class="subtitle">输入你的学习参数，AI将为你生成高效的学习时间表</div>
         <form id="plan-form">
+            <div class="card" id="subjects-card">
+                <div class="card-title">科目学习模块数量</div>
+                <div id="subjects-container"></div>
+                <button type="button" id="add-subject-btn" class="plan-btn" style="margin-top:10px;margin-bottom:0;background:linear-gradient(90deg,#26d0ce,#1a2980);"><i class="fas fa-plus"></i> 添加科目</button>
+            </div>
             <div class="card">
                 <div class="card-title">基础设置</div>
                 <div class="form-row">
@@ -158,34 +163,66 @@
                     </div>
                 </div>
             </div>
-            <div class="card">
-                <div class="card-title">科目学习模块数量</div>
-                <div class="form-row">
-                    <div class="form-col">
-                        <label class="form-label">数学</label>
-                        <input type="number" class="form-control" id="math-count" value="2" min="1" max="10" required>
-                    </div>
-                    <div class="form-col">
-                        <label class="form-label">英语</label>
-                        <input type="number" class="form-control" id="english-count" value="2" min="1" max="10" required>
-                    </div>
-                    <div class="form-col">
-                        <label class="form-label">专业课</label>
-                        <input type="number" class="form-control" id="major-count" value="2" min="1" max="10" required>
-                    </div>
-                    <div class="form-col">
-                        <label class="form-label">政治</label>
-                        <input type="number" class="form-control" id="politics-count" value="1" min="1" max="10" required>
-                    </div>
-                </div>
-            </div>
             <button type="submit" class="plan-btn"><i class="fas fa-magic"></i> 生成学习时间表</button>
             <div class="tip">提示：可根据个人习惯调整参数，生成最适合你的学习时间表</div>
         </form>
     </div>
     <script>
-    document.getElementById('plan-form').onsubmit = function(e) {
+    // 动态科目管理
+    const subjectsContainer = document.getElementById('subjects-container');
+    const addSubjectBtn = document.getElementById('add-subject-btn');
+    let subjectId = 0;
+    function createSubjectRow(name = '', count = 1) {
+        const row = document.createElement('div');
+        row.className = 'form-row';
+        row.style.alignItems = 'center';
+        row.dataset.subjectId = subjectId++;
+        row.innerHTML = `
+            <div class="form-col" style="min-width:120px;max-width:220px;flex:2;">
+                <input type="text" class="form-control subject-name" placeholder="科目名称" value="${name}" required maxlength="10">
+            </div>
+            <div class="form-col" style="max-width:120px;flex:1;">
+                <input type="number" class="form-control subject-count" value="${count}" min="1" max="10" required>
+            </div>
+            <div style="display:flex;align-items:center;">
+                <button type="button" class="plan-btn remove-subject-btn" style="padding:8px 16px;font-size:1rem;background:#eee;color:#1a2980;margin-left:8px;"><i class="fas fa-trash"></i></button>
+            </div>
+        `;
+        row.querySelector('.remove-subject-btn').onclick = function() {
+            row.remove();
+            updateAddBtnState();
+        };
+        return row;
+    }
+    function updateAddBtnState() {
+        const count = subjectsContainer.querySelectorAll('.form-row').length;
+        addSubjectBtn.disabled = count >= 8;
+    }
+    addSubjectBtn.onclick = function() {
+        if (subjectsContainer.querySelectorAll('.form-row').length < 8) {
+            subjectsContainer.appendChild(createSubjectRow());
+            updateAddBtnState();
+        }
+    };
+    // 初始默认科目
+    ['数学','英语','专业课','政治'].forEach((name, i) => {
+        subjectsContainer.appendChild(createSubjectRow(name, i===3?1:2));
+    });
+    updateAddBtnState();
+    // 表单提交逻辑
+    const planForm = document.getElementById('plan-form');
+    planForm.onsubmit = function(e) {
         e.preventDefault();
+        const subjects = Array.from(subjectsContainer.querySelectorAll('.form-row')).map(row => {
+            return {
+                name: row.querySelector('.subject-name').value.trim(),
+                count: parseInt(row.querySelector('.subject-count').value)
+            };
+        }).filter(s => s.name);
+        if (subjects.length === 0) {
+            alert('请至少添加一个科目');
+            return;
+        }
         const params = {
             startTime: document.getElementById('start-time').value,
             studyDuration: parseInt(document.getElementById('study-duration').value),
@@ -196,14 +233,40 @@
             dinnerDuration: parseInt(document.getElementById('dinner-duration').value),
             reviewTime: document.getElementById('review-time').value,
             reviewDuration: parseInt(document.getElementById('review-duration').value),
-            mathCount: parseInt(document.getElementById('math-count').value),
-            englishCount: parseInt(document.getElementById('english-count').value),
-            majorCount: parseInt(document.getElementById('major-count').value),
-            politicsCount: parseInt(document.getElementById('politics-count').value)
+            subjects: subjects
         };
         localStorage.setItem('custom_schedule_params', JSON.stringify(params));
-        window.location.href = '3deep加按钮 - cursor.html';
+        window.location.href = 'schedule.html';
     };
+    window.addEventListener('DOMContentLoaded', function() {
+        // 自动回填localStorage参数
+        const saved = localStorage.getItem('custom_schedule_params');
+        if (saved) {
+            try {
+                const params = JSON.parse(saved);
+                // 基础设置
+                document.getElementById('start-time').value = params.startTime || "09:00";
+                document.getElementById('study-duration').value = params.studyDuration || 45;
+                document.getElementById('break-duration').value = params.breakDuration || 10;
+                document.getElementById('lunch-time').value = params.lunchTime || "12:20";
+                document.getElementById('lunch-duration').value = params.lunchDuration || 55;
+                document.getElementById('dinner-time').value = params.dinnerTime || "17:25";
+                document.getElementById('dinner-duration').value = params.dinnerDuration || 45;
+                document.getElementById('review-time').value = params.reviewTime || "21:50";
+                document.getElementById('review-duration').value = params.reviewDuration || 30;
+                // 动态科目
+                subjectsContainer.innerHTML = '';
+                if (Array.isArray(params.subjects)) {
+                    params.subjects.forEach(s => {
+                        subjectsContainer.appendChild(createSubjectRow(s.name, s.count));
+                    });
+                }
+                updateAddBtnState();
+            } catch (e) {
+                // ignore
+            }
+        }
+    });
     </script>
 </body>
 </html> 

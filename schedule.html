@@ -165,6 +165,7 @@
             font-weight: 500;
             font-size: 0.85rem;
             margin-top: 8px;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
         }
         
         .math { background: linear-gradient(to right, #ff416c, #ff4b2b); }
@@ -173,7 +174,7 @@
         .politics { background: linear-gradient(to right, #8e2de2, #4a00e0); }
         .rest { background: linear-gradient(to right, #ff9a9e, #fad0c4); color: #333; }
         .meal { background: linear-gradient(to right, #ff9a9e, #fecfef); color: #333; }
-        .review { background: linear-gradient(to right, #00c6ff, #0072ff); }
+        .review { background: linear-gradient(to right, #00c6ff, #0072ff); color: white; }
         
         .notes {
             flex: 1;
@@ -1363,7 +1364,7 @@
             <button id="reset-today-btn" class="stat-reset-btn">重置今日记录</button>
         </div>
         <div id="back-to-ai-form-btn" style="text-align:center;margin:20px 0;">
-            <a href="ai_form.html" style="color:#26d0ce;font-size:1.1rem;text-decoration:underline;">返回自定义设置</a>
+            <a href="setup.html" style="color:#26d0ce;font-size:1.1rem;text-decoration:underline;">返回自定义设置</a>
         </div>
         <div id="study-page-container"></div>
                 
@@ -2302,9 +2303,44 @@
                 let backBtn = document.createElement('div');
                 backBtn.id = 'back-to-ai-form-btn';
                 backBtn.style = 'text-align:center;margin:20px 0;';
-                backBtn.innerHTML = '<a href="ai_form.html" style="color:#26d0ce;font-size:1.1rem;text-decoration:underline;">返回自定义设置</a>';
+                backBtn.innerHTML = '<a href="setup.html" style="color:#26d0ce;font-size:1.1rem;text-decoration:underline;">返回自定义设置</a>';
                 studyPage.parentNode.insertBefore(backBtn, studyPage);
             }
+
+
+            // 生成协调的渐变色对
+            function generateSubjectColors(count) {
+                const colors = [];
+                const hueStep = 360 / count;
+                for (let i = 0; i < count; i++) {
+                    const hue = (i * hueStep) % 360;
+                    colors.push({
+                        start: `hsl(${hue}, 70%, 50%)`,
+                        end: `hsl(${(hue + 30) % 360}, 70%, 60%)`
+                    });
+                }
+                return colors;
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                // 尝试获取自定义参数
+                const customParams = localStorage.getItem('custom_schedule_params');
+                let scheduleParams = DEFAULT_PARAMS;
+                
+                if (customParams) {
+                    try {
+                        scheduleParams = JSON.parse(customParams);
+                        // 确保有subjects数组
+                        if (!scheduleParams.subjects || !Array.isArray(scheduleParams.subjects)) {
+                            scheduleParams.subjects = DEFAULT_PARAMS.subjects;
+                        }
+                    } catch (e) {
+                        console.error("解析自定义参数失败", e);
+                    }
+                }
+                
+                // 生成时间表
+                generateCustomSchedule(scheduleParams);
+            });
         });
     </script>
 </body>
