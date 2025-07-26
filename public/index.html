@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>制定你的学习计划</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: #f7f8fa;
+            color: #222;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 32px 0 64px 0;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.4rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 32px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+            padding: 28px 32px 24px 32px;
+            margin-bottom: 28px;
+        }
+        
+        /* 科目学习模块特殊样式 */
+        #subjects-card {
+            position: relative;
+        }
+        
+        /* 桌面端保持原有布局 */
+        @media (min-width: 769px) {
+            #subjects-card .table-header {
+                display: flex !important;
+            }
+            
+            #subjects-card .form-row {
+                flex-direction: row !important;
+                gap: 16px !important;
+                margin-bottom: 18px !important;
+                padding: 0 !important;
+                border: none !important;
+                background: transparent !important;
+                flex-wrap: nowrap !important;
+                box-shadow: none !important;
+            }
+            
+            #subjects-card .form-col {
+                width: auto !important;
+                margin-bottom: 0 !important;
+                flex: 1 !important;
+                display: block !important;
+            }
+            
+            #subjects-card .form-col:last-child {
+                width: auto !important;
+                margin-top: 0 !important;
+                flex: none !important;
+                text-align: center !important;
+            }
+            
+            #subjects-card .form-row:not(.table-header) .form-col::before {
+                display: none !important;
+            }
+            
+            #subjects-card .remove-subject-btn {
+                width: auto !important;
+                max-width: none !important;
+                margin-left: 4px !important;
+            }
+            
+            .total-duration-card {
+                position: absolute !important;
+                top: 10px !important;
+                right: 10px !important;
+                margin: 0 !important;
+            }
+        }
+        /* 桌面端表头和数据行列宽对齐 */
+        @media (min-width: 769px) {
+            #subjects-card .table-header,
+            #subjects-card .form-row:not(.table-header) {
+                display: grid !important;
+                grid-template-columns: 200px 100px 100px 100px 80px;
+                align-items: center;
+                gap: 20px;
+                border: none !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin-bottom: 12px !important;
+            }
+            
+            /* 桌面端其他卡片的表单行保持水平布局 */
+            .form-row:not(#subjects-card .form-row) {
+                display: flex !important;
+                flex-direction: row !important;
+                gap: 32px !important;
+                margin-bottom: 18px !important;
+            }
+            
+            .form-col:not(#subjects-card .form-col) {
+                flex: 1 !important;
+                width: auto !important;
+                min-width: 0 !important;
+            }
+            
+            /* 确保输入框宽度一致 */
+            .form-control {
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            #subjects-card .form-col {
+                min-width: 0;
+                max-width: none;
+                width: 100%;
+                margin-bottom: 0 !important;
+                padding: 0;
+            }
+            #subjects-card .form-row:not(.table-header) .form-col {
+                display: flex;
+                align-items: center;
+                height: 48px;
+                box-sizing: border-box;
+                padding-left: 12px;
+                /* 移除多余的背景、边框、圆角 */
+                background: none !important;
+                border: none !important;
+                border-radius: 0 !important;
+                margin-right: 0;
+                margin-left: 0;
+            }
+            #subjects-card .form-row:not(.table-header) .form-col:last-child {
+                justify-content: center;
+                padding-left: 0;
+            }
+            #subjects-card .table-header .form-col {
+                background: none;
+                border: none;
+                font-weight: bold;
+                color: #444;
+                font-size: 1.05rem;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                padding-left: 12px;
+            }
+            #subjects-card .table-header .form-col:last-child {
+                justify-content: center;
+                padding-left: 0;
+            }
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+        .form-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+        .form-col {
+            flex: 1;
+        }
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #333;
+        }
+        .form-control, select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            font-size: 1rem;
+            background: #fafbfc;
+            margin-bottom: 0;
+        }
+        .form-control:focus, select:focus {
+            outline: none;
+            border-color: #26d0ce;
+            background: #fff;
+        }
+        .plan-btn {
+            background: linear-gradient(90deg,#1a2980,#26d0ce);
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            font-size: 1.15rem;
+            font-weight: bold;
+            padding: 14px 0;
+            width: 100%;
+            margin-top: 18px;
+            box-shadow: 0 2px 12px rgba(38,208,206,0.08);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .plan-btn:hover {
+            background: linear-gradient(90deg,#26d0ce,#1a2980);
+        }
+        
+        .plan-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .plan-btn.loading {
+            background: linear-gradient(90deg,#26d0ce,#1a2980);
+        }
+        
+        .plan-btn.success {
+            background: linear-gradient(90deg,#4CAF50,#45a049);
+        }
+        .tip {
+            color: #888;
+            font-size: 0.95rem;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        /* 总时长模块样式 */
+        .total-duration-card {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            color: white;
+            border-radius: 16px;
+            padding: 20px 24px;
+            box-shadow: 0 8px 32px rgba(26,41,128,0.2);
+            z-index: 10;
+            min-width: 180px;
+            text-align: center;
+        }
+        
+        /* 桌面端总时长模块样式 */
+        @media (min-width: 769px) {
+            .total-duration-card {
+                position: static !important;
+                background: linear-gradient(90deg, #26d0ce, #1a2980) !important;
+                border-radius: 24px !important;
+                padding: 14px 0 !important;
+                box-shadow: 0 2px 12px rgba(38,208,206,0.08) !important;
+                min-width: auto !important;
+                width: 100% !important;
+                margin-bottom: 10px !important;
+                text-align: center !important;
+                top: auto !important;
+                right: auto !important;
+                z-index: auto !important;
+            }
+            
+            .total-duration-title {
+                font-size: 1.15rem !important;
+                font-weight: bold !important;
+                margin-bottom: 0 !important;
+                opacity: 1 !important;
+            }
+            
+            .total-duration-value {
+                font-size: 1.15rem !important;
+                font-weight: bold !important;
+                margin-bottom: 0 !important;
+            }
+            
+            .total-duration-unit {
+                display: none !important;
+            }
+        }
+        
+        .total-duration-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+        
+        .total-duration-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .total-duration-unit {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .total-duration-card {
+                position: absolute !important;
+                top: 10px !important;
+                right: 10px !important;
+                margin: 0 !important;
+                padding: 20px 24px !important;
+                min-width: 180px !important;
+                font-size: 0.9rem !important;
+                background: linear-gradient(135deg, #1a2980, #26d0ce) !important;
+                border-radius: 16px !important;
+                box-shadow: 0 8px 32px rgba(26,41,128,0.2) !important;
+                z-index: 10 !important;
+                text-align: center !important;
+            }
+            
+            .total-duration-value {
+                font-size: 1.3rem;
+            }
+            
+            /* 科目学习模块移动端优化 */
+            #subjects-card .table-header {
+                display: none !important; /* 隐藏表头 */
+            }
+            
+            #subjects-card .form-row {
+                flex-direction: column !important;
+                gap: 12px !important;
+                margin-bottom: 16px !important;
+                padding: 16px !important;
+                border: 1px solid #e0e0e0 !important;
+                border-radius: 12px !important;
+                background: #fafbfc !important;
+                position: relative !important;
+            }
+            
+            #subjects-card .form-col {
+                width: 100% !important;
+                margin-bottom: 0 !important;
+            }
+            
+            #subjects-card .form-col:last-child {
+                width: 100% !important;
+                text-align: center !important;
+                margin-top: 12px !important;
+            }
+            
+            /* 确保删除按钮在移动端正确显示 */
+            #subjects-card .remove-subject-btn {
+                padding: 8px 16px !important;
+                font-size: 0.9rem !important;
+                margin-left: 0 !important;
+                border-radius: 8px !important;
+                background: #ff4757 !important;
+                color: white !important;
+                border: none !important;
+                cursor: pointer !important;
+                width: 100% !important;
+                max-width: 120px !important;
+            }
+            
+            .remove-subject-btn:hover {
+                background: #ff3742 !important;
+            }
+            
+            /* 科目名称标签 */
+            #subjects-card .form-row:not(.table-header) .form-col:first-child::before {
+                content: "科目名称:";
+                display: block;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 4px;
+                font-size: 0.9rem;
+            }
+            
+            /* 模块数标签 */
+            #subjects-card .form-row:not(.table-header) .form-col:nth-child(2)::before {
+                content: "模块数:";
+                display: block;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 4px;
+                font-size: 0.9rem;
+            }
+            
+            /* 学习时长标签 */
+            #subjects-card .form-row:not(.table-header) .form-col:nth-child(3)::before {
+                content: "学习时长(分钟):";
+                display: block;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 4px;
+                font-size: 0.9rem;
+            }
+            
+            /* 休息时长标签 */
+            #subjects-card .form-row:not(.table-header) .form-col:nth-child(4)::before {
+                content: "休息时长(分钟):";
+                display: block;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 4px;
+                font-size: 0.9rem;
+            }
+            
+            /* 移动端科目卡片样式优化 */
+            #subjects-card .form-row {
+                margin-bottom: 20px;
+                padding: 20px;
+                border-radius: 16px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            }
+            
+            #subjects-card .form-col {
+                margin-bottom: 12px;
+            }
+            
+            #subjects-card .form-col:last-child {
+                margin-bottom: 0;
+                margin-top: 16px;
+            }
+            
+            /* 移动端标签样式优化 */
+            #subjects-card .form-col::before {
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 6px;
+                font-size: 0.9rem;
+                display: block;
+            }
+            
+            /* 删除按钮样式优化 */
+            #subjects-card .form-col:last-child {
+                text-align: center;
+                margin-top: 8px;
+            }
+        }
+        @media (max-width: 768px) {
+            .container { 
+                padding: 20px 15px 40px 15px; 
+                max-width: 100%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 8px;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+                margin-bottom: 24px;
+            }
+            
+            .card { 
+                padding: 20px 16px; 
+                margin-bottom: 20px;
+            }
+            
+            .card-title {
+                font-size: 1.1rem;
+                margin-bottom: 16px;
+            }
+            
+            /* 基础表单行保持垂直布局 */
+            .form-row:not(#subjects-card .form-row) { 
+                flex-direction: column; 
+                gap: 12px; 
+                margin-bottom: 16px;
+            }
+            
+            .form-col:not(#subjects-card .form-col) {
+                width: 100%;
+            }
+            
+            .form-label {
+                font-size: 0.9rem;
+                margin-bottom: 4px;
+            }
+            
+            .form-control {
+                font-size: 0.95rem;
+                padding: 8px 10px;
+            }
+            
+            .plan-btn {
+                font-size: 1rem;
+                padding: 12px 0;
+            }
+            
+            /* 添加科目按钮优化 */
+            #add-subject-btn {
+                margin-top: 16px;
+                padding: 12px 0;
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container { 
+                padding: 15px 10px 30px 10px; 
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+                margin-bottom: 20px;
+            }
+            
+            .card { 
+                padding: 16px 12px; 
+                margin-bottom: 16px;
+            }
+            
+            .card-title {
+                font-size: 1rem;
+                margin-bottom: 12px;
+            }
+            
+            /* 基础表单行保持垂直布局 */
+            .form-row:not(#subjects-card .form-row) { 
+                gap: 8px; 
+                margin-bottom: 12px;
+            }
+            
+            .form-label {
+                font-size: 0.85rem;
+            }
+            
+            .form-control {
+                font-size: 0.9rem;
+                padding: 6px 8px;
+            }
+            
+            .plan-btn {
+                font-size: 0.95rem;
+                padding: 10px 0;
+            }
+            
+            /* 添加科目按钮小屏幕优化 */
+            #add-subject-btn {
+                margin-top: 12px;
+                padding: 10px 0;
+                font-size: 0.95rem;
+            }
+            
+            /* 科目学习模块小屏幕优化 */
+            #subjects-card .form-row {
+                gap: 8px;
+                margin-bottom: 12px;
+                padding: 12px;
+            }
+            
+            #subjects-card .form-col {
+                width: 100% !important;
+                margin-bottom: 0 !important;
+            }
+            
+            #subjects-card .form-col:last-child {
+                width: 100%;
+                margin-top: 8px;
+            }
+            
+
+            
+            #subjects-card .form-col::before {
+                font-size: 0.85rem;
+                margin-bottom: 3px;
+            }
+            
+            /* 小屏幕科目卡片样式优化 */
+            #subjects-card .form-row {
+                margin-bottom: 16px;
+                padding: 16px;
+                border-radius: 14px;
+            }
+            
+            #subjects-card .form-col {
+                margin-bottom: 10px;
+            }
+            
+            #subjects-card .form-col:last-child {
+                margin-bottom: 0;
+                margin-top: 12px;
+            }
+            
+            /* 小屏幕标签样式优化 */
+            #subjects-card .form-col::before {
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 4px;
+                font-size: 0.85rem;
+                display: block;
+            }
+            
+            /* 小屏幕删除按钮样式优化 */
+            #subjects-card .form-col:last-child {
+                text-align: center;
+                margin-top: 6px;
+            }
+            
+            .total-duration-card {
+                position: absolute !important;
+                top: 10px !important;
+                right: 10px !important;
+                margin: 0 !important;
+                padding: 20px 24px !important;
+                min-width: 180px !important;
+                font-size: 0.85rem !important;
+                background: linear-gradient(135deg, #1a2980, #26d0ce) !important;
+                border-radius: 16px !important;
+                box-shadow: 0 8px 32px rgba(26,41,128,0.2) !important;
+                z-index: 10 !important;
+                text-align: center !important;
+            }
+            
+            .total-duration-title {
+                font-size: 0.9rem !important;
+                font-weight: 500 !important;
+                margin-bottom: 8px !important;
+                opacity: 0.9 !important;
+            }
+            
+            .total-duration-value {
+                font-size: 1.8rem !important;
+                font-weight: bold !important;
+                margin-bottom: 4px !important;
+            }
+            
+            .total-duration-unit {
+                font-size: 0.8rem !important;
+                opacity: 0.8 !important;
+            }
+            
+            /* 删除按钮小屏幕优化 */
+            #subjects-card .remove-subject-btn {
+                padding: 6px 12px !important;
+                font-size: 0.85rem !important;
+                margin-left: 0 !important;
+                border-radius: 6px !important;
+                background: #ff4757 !important;
+                color: white !important;
+                border: none !important;
+                cursor: pointer !important;
+                width: 100% !important;
+                max-width: 100px !important;
+            }
+            
+            .remove-subject-btn:hover {
+                background: #ff3742 !important;
+            }
+        }
+        @media (min-width: 769px) {
+            .total-duration-card {
+                width: calc(100% - 100px) !important;
+                margin-left: 50px !important;
+                margin-right: 50px !important;
+                border-radius: 40px !important;
+                box-sizing: border-box;
+                margin-bottom: 16px !important;
+            }
+            #add-subject-btn {
+                width: calc(100% - 100px) !important;
+                margin-left: 50px !important;
+                margin-right: 50px !important;
+                border-radius: 40px !important;
+                box-sizing: border-box;
+                margin-top: 16px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>制定你的学习计划</h1>
+        <div class="subtitle">输入你的学习参数，AI将为你生成高效的学习时间表</div>
+        <form id="plan-form" action="schedule.html" method="get">
+            <div class="card" id="subjects-card">
+                <div class="card-title">科目学习模块数量</div>
+                
+                <div class="form-row table-header" style="margin-bottom: 15px; font-weight: bold; color: #666; font-size: 0.9rem;">
+                    <div class="form-col">科目名称</div>
+                    <div class="form-col">模块数</div>
+                    <div class="form-col">学习时长</div>
+                    <div class="form-col">休息时长</div>
+                    <div class="form-col" style="text-align:center;">操作</div>
+                </div>
+                <div id="subjects-container"></div>
+                
+                <!-- 总时长模块 -->
+                <div class="total-duration-card">
+                    <div class="total-duration-title">计划学习总时长</div>
+                    <div class="total-duration-value" id="total-duration-value">0分</div>
+                    <div class="total-duration-unit"></div>
+                </div>
+                <button type="button" id="add-subject-btn" class="plan-btn" style="margin-top:10px;margin-bottom:0;background:linear-gradient(90deg,#26d0ce,#1a2980);"><i class="fas fa-plus"></i> 添加科目</button>
+            </div>
+            <div class="card">
+                <div class="card-title">基础设置</div>
+                <div class="form-row">
+                    <div class="form-col">
+                        <label class="form-label">开始学习时间</label>
+                        <input type="time" class="form-control" id="start-time" value="09:00" required>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">用餐时间设置</div>
+                <div class="form-row">
+                    <div class="form-col">
+                        <label class="form-label">午餐开始时间</label>
+                        <input type="time" class="form-control" id="lunch-time" value="12:20" required>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label">午餐时长(分钟)</label>
+                        <input type="number" class="form-control" id="lunch-duration" value="55" min="30" max="90" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-col">
+                        <label class="form-label">晚餐开始时间</label>
+                        <input type="time" class="form-control" id="dinner-time" value="17:25" required>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label">晚餐时长(分钟)</label>
+                        <input type="number" class="form-control" id="dinner-duration" value="45" min="30" max="90" required>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">复盘时间设置</div>
+                <div class="form-row">
+                    <div class="form-col">
+                        <label class="form-label">复盘开始时间</label>
+                        <input type="time" class="form-control" id="review-time" value="21:50" required>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label">复盘时长(分钟)</label>
+                        <input type="number" class="form-control" id="review-duration" value="30" min="15" max="60" required>
+                    </div>
+                </div>
+            </div>
+            <!-- 隐藏字段用于传递数据 -->
+            <input type="hidden" id="subjects-data" name="subjects" value="">
+            <input type="hidden" id="schedule-params" name="params" value="">
+            
+            <button type="submit" class="plan-btn"><i class="fas fa-magic"></i> 生成学习时间表</button>
+            <div class="tip">提示：可根据个人习惯调整参数，生成最适合你的学习时间表</div>
+        </form>
+
+    </div>
+    <script>
+    // 动态科目管理
+    const subjectsContainer = document.getElementById('subjects-container');
+    const addSubjectBtn = document.getElementById('add-subject-btn');
+    const totalDurationValue = document.getElementById('total-duration-value');
+    let subjectId = 0;
+    
+    // 计算计划学习总时长
+    function calculateTotalStudyTime() {
+        let totalMinutes = 0;
+        const subjectRows = subjectsContainer.querySelectorAll('.form-row:not(.table-header)');
+        
+        subjectRows.forEach(row => {
+            // 确保只计算有效的科目行
+            if (row.querySelector('.subject-name') && row.querySelector('.subject-count') && row.querySelector('.subject-study-duration')) {
+                const countInput = row.querySelector('.subject-count');
+                const durationInput = row.querySelector('.subject-study-duration');
+                const nameInput = row.querySelector('.subject-name');
+                
+                // 确保科目名称不为空
+                if (nameInput && nameInput.value.trim()) {
+                    const count = parseInt(countInput.value) || 0;
+                    const duration = parseInt(durationInput.value) || 0;
+                    totalMinutes += count * duration;
+                }
+            }
+        });
+        
+        return totalMinutes;
+    }
+    
+    // 更新总时长显示
+    function updateTotalDuration() {
+        const totalMinutes = calculateTotalStudyTime();
+        
+        // 转换为时、分格式
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        
+        if (hours > 0) {
+            totalDurationValue.textContent = `${hours}时${minutes}分`;
+        } else {
+            totalDurationValue.textContent = `${minutes}分`;
+        }
+        
+        // 调试信息（可选）
+        console.log('总时长计算:', {
+            totalMinutes,
+            hours,
+            minutes,
+            subjectCount: subjectsContainer.querySelectorAll('.form-row:not(.table-header)').length
+        });
+    }
+    function createSubjectRow(name = '', count = 1, studyDuration = 45, breakDuration = 10) {
+        const row = document.createElement('div');
+        row.className = 'form-row';
+        row.dataset.subjectId = subjectId++;
+        row.innerHTML = `
+            <div class="form-col">
+                <input type="text" class="form-control subject-name" placeholder="科目名称" value="${name}" required maxlength="10">
+            </div>
+            <div class="form-col">
+                <input type="number" class="form-control subject-count" value="${count}" min="1" max="10" required>
+            </div>
+            <div class="form-col">
+                <input type="number" class="form-control subject-study-duration" value="${studyDuration}" min="20" max="90" required>
+            </div>
+            <div class="form-col">
+                <input type="number" class="form-control subject-break-duration" value="${breakDuration}" min="5" max="30" required>
+            </div>
+            <div class="form-col">
+                <button type="button" class="plan-btn remove-subject-btn" style="padding:8px 12px;font-size:0.9rem;background:#eee;color:#1a2980;margin-left:4px;min-width:auto;"><i class="fas fa-trash"></i></button>
+            </div>
+        `;
+        row.querySelector('.remove-subject-btn').onclick = function() {
+            row.remove();
+            updateAddBtnState();
+            updateTotalDuration();
+        };
+        
+        // 为模块数和学习时长输入框添加事件监听器
+        const countInput = row.querySelector('.subject-count');
+        const durationInput = row.querySelector('.subject-study-duration');
+        
+        countInput.addEventListener('input', updateTotalDuration);
+        durationInput.addEventListener('input', updateTotalDuration);
+        
+        return row;
+    }
+    function updateAddBtnState() {
+        const count = subjectsContainer.querySelectorAll('.form-row:not(.table-header)').length;
+        addSubjectBtn.disabled = count >= 8;
+    }
+    addSubjectBtn.onclick = function() {
+        if (subjectsContainer.querySelectorAll('.form-row:not(.table-header)').length < 8) {
+            subjectsContainer.appendChild(createSubjectRow());
+            updateAddBtnState();
+            updateTotalDuration();
+        }
+    };
+    // 初始默认科目
+    [
+        {name: '数学', count: 2, studyDuration: 45, breakDuration: 10},
+        {name: '英语', count: 2, studyDuration: 30, breakDuration: 8},
+        {name: '专业课', count: 2, studyDuration: 50, breakDuration: 12},
+        {name: '政治', count: 1, studyDuration: 40, breakDuration: 10}
+    ].forEach((subject) => {
+        subjectsContainer.appendChild(createSubjectRow(subject.name, subject.count, subject.studyDuration, subject.breakDuration));
+    });
+    updateAddBtnState();
+    updateTotalDuration(); // 初始化时计算总时长
+    // 表单提交逻辑 - 传统表单提交方式
+    const planForm = document.getElementById('plan-form');
+    planForm.onsubmit = function(e) {
+        // 验证表单数据
+        const subjects = Array.from(subjectsContainer.querySelectorAll('.form-row:not(.table-header)')).map(row => {
+            return {
+                name: row.querySelector('.subject-name').value.trim(),
+                count: parseInt(row.querySelector('.subject-count').value),
+                studyDuration: parseInt(row.querySelector('.subject-study-duration').value),
+                breakDuration: parseInt(row.querySelector('.subject-break-duration').value)
+            };
+        }).filter(s => s.name);
+        
+        if (subjects.length === 0) {
+            alert('请至少添加一个科目');
+            e.preventDefault();
+            return false;
+        }
+        
+        // 构建参数对象
+        const params = {
+            startTime: document.getElementById('start-time').value,
+            lunchTime: document.getElementById('lunch-time').value,
+            lunchDuration: parseInt(document.getElementById('lunch-duration').value),
+            dinnerTime: document.getElementById('dinner-time').value,
+            dinnerDuration: parseInt(document.getElementById('dinner-duration').value),
+            reviewTime: document.getElementById('review-time').value,
+            reviewDuration: parseInt(document.getElementById('review-duration').value),
+            subjects: subjects
+        };
+        
+        // 保存参数到localStorage
+        localStorage.setItem('custom_schedule_params', JSON.stringify(params));
+        
+        // 设置跳转标记
+        sessionStorage.setItem('fromSetup', 'true');
+        
+        // 将数据设置到隐藏字段中（用于传统表单提交）
+        document.getElementById('subjects-data').value = JSON.stringify(subjects);
+        document.getElementById('schedule-params').value = JSON.stringify(params);
+        
+        // 显示提交状态
+        const submitBtn = document.querySelector('.plan-btn[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在生成时间表...';
+        submitBtn.disabled = true;
+        submitBtn.classList.add('loading');
+        
+        // 更新提示信息
+        const tipElement = document.querySelector('.tip');
+        tipElement.innerHTML = '正在处理您的学习计划...';
+        tipElement.style.color = '#26d0ce';
+        tipElement.style.fontWeight = 'bold';
+        
+        // 允许表单正常提交，不阻止默认行为
+        // 表单会通过action属性跳转到schedule.html
+        return true;
+    };
+        
+        // 注意：以下函数仅用于内部逻辑，不显示预览
+        // 时间表生成逻辑（隐藏）
+        function generateScheduleItems(params) {
+            const { startTime, lunchTime, lunchDuration, dinnerTime, dinnerDuration, reviewTime, reviewDuration, subjects } = params;
+            const defaultStudyDuration = 45;
+            const defaultBreakDuration = 10;
+            
+            let taskPool = [];
+            subjects.forEach((subj, subjIdx) => {
+                const subjectStudyDuration = subj.studyDuration || defaultStudyDuration;
+                const subjectBreakDuration = subj.breakDuration || defaultBreakDuration;
+                const subjectType = getSubjectType(subj.name);
+                
+                for(let i=0; i<subj.count; i++) {
+                    taskPool.push({
+                        id: `${subjIdx}-${i}`,
+                        subject: subj.name,
+                        subjectType: subjectType,
+                        subjectClass: getSubjectClass(subj.name),
+                        duration: subjectStudyDuration,
+                        breakDuration: subjectBreakDuration,
+                        moduleIndex: i + 1,
+                        isAfterLunch: false,
+                        isEasySubject: subjectType === 'liberal' || subj.name.includes('英')
+                    });
+                }
+            });
+            
+        let timelineItems = [];
+        let current = startTime;
+            let lastSubject = null;
+            let lastSubjectType = null;
+            let consecutiveStudyTime = 0;
+            const maxConsecutiveStudyTime = 60;
+            
+            while (taskPool.length > 0) {
+                let selectedTask = null;
+                let selectedIndex = -1;
+                
+                for (let i = 0; i < taskPool.length; i++) {
+                    const task = taskPool[i];
+                    if (task.subject !== lastSubject) {
+                        selectedTask = task;
+                        selectedIndex = i;
+                        break;
+                    }
+                }
+                
+                if (!selectedTask) {
+                    for (let i = 0; i < taskPool.length; i++) {
+                        const task = taskPool[i];
+                        if (task.subjectType !== lastSubjectType) {
+                            selectedTask = task;
+                            selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+                
+                if (!selectedTask) {
+                    selectedTask = taskPool[0];
+                    selectedIndex = 0;
+                }
+                
+                if (consecutiveStudyTime >= maxConsecutiveStudyTime) {
+                    timelineItems.push({
+                        type: 'break',
+                        subject: '强制休息',
+                        start: current,
+                        end: addMinutes(current, defaultBreakDuration),
+                        duration: defaultBreakDuration,
+                        subjectClass: 'rest',
+                        highlight: '',
+                        title: '健康休息',
+                        desc: '连续学习时间过长，强制休息调整'
+                    });
+                    current = addMinutes(current, defaultBreakDuration);
+                    consecutiveStudyTime = 0;
+                }
+                
+                timelineItems.push({
+                    type: 'study',
+                    subject: selectedTask.subject,
+                    start: current,
+                    end: addMinutes(current, selectedTask.duration),
+                    duration: selectedTask.duration,
+                    subjectClass: selectedTask.subjectClass,
+                    highlight: selectedTask.subject.includes('英') ? 'english-highlight' : '',
+                    title: selectedTask.subject + (selectedTask.moduleIndex > 1 ? `（第${selectedTask.moduleIndex}模块）` : ''),
+                    desc: selectedTask.subject + "学习"
+                });
+                
+                current = addMinutes(current, selectedTask.duration);
+                consecutiveStudyTime += selectedTask.duration;
+                lastSubject = selectedTask.subject;
+                lastSubjectType = selectedTask.subjectType;
+                taskPool.splice(selectedIndex, 1);
+                
+                if (taskPool.length > 0) {
+                    timelineItems.push({
+                        type: 'break',
+                        subject: '科目间休息',
+                        start: current,
+                        end: addMinutes(current, selectedTask.breakDuration),
+                        duration: selectedTask.breakDuration,
+                        subjectClass: 'rest',
+                        highlight: '',
+                        title: '短暂休息',
+                        desc: '放松调整，准备下一科目'
+                    });
+                    current = addMinutes(current, selectedTask.breakDuration);
+                    consecutiveStudyTime = 0;
+                }
+            }
+            
+        insertMeal(timelineItems, lunchTime, lunchDuration, '午餐与放松', 'meal');
+        insertMeal(timelineItems, dinnerTime, dinnerDuration, '晚餐与放松', 'meal');
+        insertMeal(timelineItems, reviewTime, reviewDuration, '当日复盘与明日计划', 'review');
+            optimizeAfterLunch(timelineItems, lunchTime, lunchDuration);
+            
+        return timelineItems.sort((a,b)=>a.start.localeCompare(b.start));
+    }
+        
+    function getSubjectClass(name) {
+        if(name.includes('数')) return 'math';
+        if(name.includes('英')) return 'english';
+        if(name.includes('专')) return 'major';
+        if(name.includes('政')) return 'politics';
+        return 'major';
+    }
+        
+        function getSubjectType(name) {
+            const liberalArts = ['英语', '政治', '语文', '历史', '地理', '文学', '语言', '阅读', '写作'];
+            const science = ['数学', '物理', '化学', '生物', '专业课', '工程', '技术', '编程', '算法'];
+            
+            for (let keyword of liberalArts) {
+                if (name.includes(keyword)) {
+                    return 'liberal';
+                }
+            }
+            
+            for (let keyword of science) {
+                if (name.includes(keyword)) {
+                    return 'science';
+                }
+            }
+            
+            return 'science';
+        }
+        
+    function insertMeal(arr, time, duration, title, subjectClass) {
+        let idx = arr.findIndex(item=>item.start>=time);
+        let meal = {
+            type: subjectClass,
+            start: time,
+            end: addMinutes(time, duration),
+            duration: duration,
+            subjectClass: subjectClass,
+            highlight: '',
+            title: title,
+            desc: subjectClass==='review'?'总结收获，规划明日重点':'营养均衡，完全脱离学习环境'
+        };
+        if(idx===-1) arr.push(meal);
+        else arr.splice(idx,0,meal);
+    }
+        
+        function optimizeAfterLunch(timelineItems, lunchTime, lunchDuration) {
+            const lunchEnd = addMinutes(lunchTime, lunchDuration);
+            
+            for (let i = 0; i < timelineItems.length; i++) {
+                const item = timelineItems[i];
+                if (item.type === 'study' && item.start >= lunchEnd) {
+                    if (!item.subject.includes('英') && !item.subject.includes('政治')) {
+                        for (let j = i + 1; j < timelineItems.length; j++) {
+                            const laterItem = timelineItems[j];
+                            if (laterItem.type === 'study' && 
+                                (laterItem.subject.includes('英') || laterItem.subject.includes('政治'))) {
+                                const tempStart = item.start;
+                                const tempEnd = item.end;
+                                item.start = laterItem.start;
+                                item.end = laterItem.end;
+                                laterItem.start = tempStart;
+                                laterItem.end = tempEnd;
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        
+    function addMinutes(time, mins) {
+        const [h, m] = time.split(":").map(Number);
+        let date = new Date(2000, 0, 1, h, m);
+        date.setMinutes(date.getMinutes() + mins);
+        return date.toTimeString().slice(0,5);
+    }
+
+
+    
+
+
+
+    window.addEventListener('DOMContentLoaded', function() {
+        // 自动回填localStorage参数
+        const saved = localStorage.getItem('custom_schedule_params');
+        if (saved) {
+            try {
+                const params = JSON.parse(saved);
+                // 基础设置
+                document.getElementById('start-time').value = params.startTime || "09:00";
+                document.getElementById('lunch-time').value = params.lunchTime || "12:20";
+                document.getElementById('lunch-duration').value = params.lunchDuration || 55;
+                document.getElementById('dinner-time').value = params.dinnerTime || "17:25";
+                document.getElementById('dinner-duration').value = params.dinnerDuration || 45;
+                document.getElementById('review-time').value = params.reviewTime || "21:50";
+                document.getElementById('review-duration').value = params.reviewDuration || 30;
+                // 动态科目
+                // 清空现有科目行（保留表头）
+                const existingRows = subjectsContainer.querySelectorAll('.form-row:not(.table-header)');
+                existingRows.forEach(row => row.remove());
+                
+                if (Array.isArray(params.subjects)) {
+                    params.subjects.forEach(s => {
+                        subjectsContainer.appendChild(createSubjectRow(s.name, s.count, s.studyDuration, s.breakDuration));
+                    });
+                }
+                updateAddBtnState();
+                updateTotalDuration(); // 回填数据后更新总时长
+            } catch (e) {
+                // ignore
+            }
+        }
+    });
+    </script>
+</body>
+</html> 
